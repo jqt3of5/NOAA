@@ -6,11 +6,19 @@ import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
+
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -31,8 +39,31 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         nav_view.setNavigationItemSelectedListener(this)
 
-        val recyclerView = findViewById<RecyclerView>(R.id.main_recycler_view)
-        recyclerView.adapter = MainAdapter()
+
+
+        val retrofit = Retrofit.Builder()
+                .baseUrl("https://api.weather.gov")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+        val service = retrofit.create(WeatherApi::class.java)
+
+        service.getAllActiveAlerts().enqueue(object:Callback<ZoneAlert>{
+            override fun onFailure(call: Call<ZoneAlert>?, t: Throwable?) {
+                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            }
+
+            override fun onResponse(call: Call<ZoneAlert>?, response: Response<ZoneAlert>?) {
+                Toast.makeText(applicationContext, response?.body()?.title, Toast.LENGTH_LONG).show()
+
+            }
+        })
+
+
+        val layout =  LinearLayoutManager(this)
+        val recyclerView = findViewById<RecyclerView>(R.id.main_recycler_view).apply {
+            adapter = MainAdapter()
+            layoutManager =  layout
+        }
 
     }
 
