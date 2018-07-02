@@ -1,15 +1,23 @@
 package com.example.jqt3of5.noaa
 
+import android.app.ActionBar
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
+import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.app.AppCompatDialog
+import android.support.v7.widget.AppCompatSpinner
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.Menu
 import android.view.MenuItem
+import android.view.ViewGroup
+import android.widget.ArrayAdapter
+import android.widget.LinearLayout
+import android.widget.Spinner
 import android.widget.Toast
 
 import kotlinx.android.synthetic.main.activity_main.*
@@ -19,8 +27,13 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.*
 
-class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, SpinnerDialogSelectedItemListener<String> {
+
+    var mAdapter = MainAdapter()
+    lateinit var mRecyclerView : RecyclerView
+    var mRegions : List<String>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,32 +52,57 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         nav_view.setNavigationItemSelectedListener(this)
 
+        val retrofit = Retrofit.Builder()
+                .baseUrl("https://api.weather.gov")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
 
+        val service = retrofit.create(WeatherApi::class.java)
+        service.getLocationCodes().enqueue(object:Callback<AlertCountsByLocation>{
+            override fun onResponse(call: Call<AlertCountsByLocation>?, response: Response<AlertCountsByLocation>?) {
+                mRegions = response?.body()?.areas?.keys?.distinct()
+                showRegionSelectDialog()
+            }
+
+            override fun onFailure(call: Call<AlertCountsByLocation>?, t: Throwable?) {
+                Toast.makeText(applicationContext, "Failed", Toast.LENGTH_LONG)
+            }
+        })
+
+        val layout =  LinearLayoutManager(this)
+        mRecyclerView = findViewById<RecyclerView>(R.id.main_recycler_view).apply {
+            adapter = mAdapter
+            layoutManager =  layout
+        }
+    }
+
+    fun showRegionSelectDialog()
+    {
+        val context = this.applicationContext
+        val dialog = SpinnderDialogFragment()
+
+        dialog.mItems = mRegions
+        dialog.mTitle = "Select Region"
+        dialog.mListener = this
+        dialog.show(supportFragmentManager, "state_select_fragment")
+    }
+    override fun ItemSelected(selection: String) {
 
         val retrofit = Retrofit.Builder()
                 .baseUrl("https://api.weather.gov")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
+
         val service = retrofit.create(WeatherApi::class.java)
+        service.getAlertByArea(selection).enqueue(object:Callback<AreaAlert> {
+            override fun onFailure(call: Call<AreaAlert>?, t: Throwable?) {
 
-        service.getAllActiveAlerts().enqueue(object:Callback<ZoneAlert>{
-            override fun onFailure(call: Call<ZoneAlert>?, t: Throwable?) {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
             }
-
-            override fun onResponse(call: Call<ZoneAlert>?, response: Response<ZoneAlert>?) {
-                Toast.makeText(applicationContext, response?.body()?.title, Toast.LENGTH_LONG).show()
-
+            override fun onResponse(call: Call<AreaAlert>?, response: Response<AreaAlert>?) {
+                mAdapter?.areaData = response?.body()
+                mAdapter?.notifyDataSetChanged()
             }
         })
-
-
-        val layout =  LinearLayoutManager(this)
-        val recyclerView = findViewById<RecyclerView>(R.id.main_recycler_view).apply {
-            adapter = MainAdapter()
-            layoutManager =  layout
-        }
-
     }
 
     override fun onBackPressed() {
@@ -87,6 +125,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // as you specify a parent activity in AndroidManifest.xml.
         when (item.itemId) {
             R.id.action_settings -> return true
+            R.id.action_select_region -> {
+                showRegionSelectDialog()
+                return true
+            }
             else -> return super.onOptionsItemSelected(item)
         }
     }

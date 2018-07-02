@@ -8,11 +8,12 @@ import retrofit2.http.Headers
 import retrofit2.http.Path
 
 //https://www.ncdc.noaa.gov/cdo-web/api/v2/{endpoint}
-//https://api.weather.gov/
+
 interface NoaaApi
 {
 }
 
+//https://api.weather.gov/
 interface WeatherApi
 {
     @Headers("User-Agent: jqt3of5@gmail.com", "Accept: application/vnd.github.v3.full+json")
@@ -20,6 +21,18 @@ interface WeatherApi
     fun getAlertByZone(@Path("zone") zone : String) : Call<ZoneAlert>
 
     @Headers("User-Agent: jqt3of5@gmail.com", "Accept: application/vnd.github.v3.full+json")
+    @GET("/alerts/active/region/{region}")
+    fun getAlertByRegion(@Path("region") region : String) : Call<ZoneAlert>
+
+    @Headers("User-Agent: jqt3of5@gmail.com", "Accept: application/vnd.github.v3.full+json")
+    @GET("/alerts/active/area/{area}")
+    fun getAlertByArea(@Path("area") area : String) : Call<AreaAlert>
+
+    @Headers("User-Agent: jqt3of5@gmail.com", "Accept: application/vnd.github.v3.full+json")
     @GET("/alerts/active/")
     fun getAllActiveAlerts() : Call<ZoneAlert>
+
+    @Headers("User-Agent: jqt3of5@gmail.com", "Accept: application/vnd.github.v3.full+json")
+    @GET("/alerts/active/count")
+    fun getLocationCodes() : Call<AlertCountsByLocation>
 }
