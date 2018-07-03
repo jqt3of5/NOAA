@@ -18,7 +18,7 @@ interface WeatherApi
 {
     @Headers("User-Agent: jqt3of5@gmail.com", "Accept: application/vnd.github.v3.full+json")
     @GET("/alerts/active/zone/{zone}")
-    fun getAlertByZone(@Path("zone") zone : String) : Call<ZoneAlert>
+    fun getAlertByZone(@Path("zone") zone : String) : Call<AreaAlert>
 
     @Headers("User-Agent: jqt3of5@gmail.com", "Accept: application/vnd.github.v3.full+json")
     @GET("/alerts/active/region/{region}")

@@ -29,7 +29,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.*
 
-class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, SpinnerDialogSelectedItemListener<String> {
+class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, SpinnerDialogSelectedItemListener<CountyFipsData?> {
 
     var mAdapter = MainAdapter()
     lateinit var mRecyclerView : RecyclerView
@@ -81,28 +81,32 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val context = this.applicationContext
         val dialog = SpinnderDialogFragment()
 
-        dialog.mItems = mRegions
+        val data = FipsDataLoader().loadFipsData(context)
+        dialog.mCountyMap = data
         dialog.mTitle = "Select Region"
         dialog.mListener = this
         dialog.show(supportFragmentManager, "state_select_fragment")
     }
-    override fun ItemSelected(selection: String) {
+    override fun ItemSelected(selection: CountyFipsData?) {
+        selection?.let{
+            val retrofit = Retrofit.Builder()
+                    .baseUrl("https://api.weather.gov")
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build()
 
-        val retrofit = Retrofit.Builder()
-                .baseUrl("https://api.weather.gov")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build()
+            val service = retrofit.create(WeatherApi::class.java)
 
-        val service = retrofit.create(WeatherApi::class.java)
-        service.getAlertByArea(selection).enqueue(object:Callback<AreaAlert> {
-            override fun onFailure(call: Call<AreaAlert>?, t: Throwable?) {
+            service.getAlertByZone(it.state+"Z"+it.countFips).enqueue(object:Callback<AreaAlert> {
+                override fun onFailure(call: Call<AreaAlert>?, t: Throwable?) {
 
-            }
-            override fun onResponse(call: Call<AreaAlert>?, response: Response<AreaAlert>?) {
-                mAdapter?.areaData = response?.body()
-                mAdapter?.notifyDataSetChanged()
-            }
-        })
+                }
+                override fun onResponse(call: Call<AreaAlert>?, response: Response<AreaAlert>?) {
+                    mAdapter?.areaData = response?.body()
+                    mAdapter?.notifyDataSetChanged()
+                }
+            })
+        }
+
     }
 
     override fun onBackPressed() {
