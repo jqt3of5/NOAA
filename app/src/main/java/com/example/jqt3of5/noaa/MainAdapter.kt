@@ -1,13 +1,10 @@
 package com.example.jqt3of5.noaa
 
 import android.content.Context
-import android.database.DataSetObserver
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.ListAdapter
-import android.widget.TextView
+import com.example.jqt3of5.noaa.Api.DataObjects.AreaAlert
 
 class MainAdapter : RecyclerView.Adapter<MainAdapter.ViewHolder>()
 {

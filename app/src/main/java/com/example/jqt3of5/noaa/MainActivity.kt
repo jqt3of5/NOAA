@@ -1,24 +1,24 @@
 package com.example.jqt3of5.noaa
 
-import android.app.ActionBar
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
-import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.app.AppCompatDialog
-import android.support.v7.widget.AppCompatSpinner
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.Menu
 import android.view.MenuItem
-import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.LinearLayout
-import android.widget.Spinner
-import android.widget.Toast
+import com.example.jqt3of5.noaa.Api.WeatherApi
+import com.example.jqt3of5.noaa.Api.DataObjects.AlertCountsByLocation
+import com.example.jqt3of5.noaa.Api.DataObjects.AreaAlert
+import com.example.jqt3of5.noaa.RegionSelect.CountyFipsData
+import com.example.jqt3of5.noaa.RegionSelect.FipsDataLoader
+import com.example.jqt3of5.noaa.RegionSelect.SpinnderDialogFragment
+import com.example.jqt3of5.noaa.RegionSelect.SpinnerDialogSelectedItemListener
+//import com.google.android.material.chip.Chip
+//import com.google.android.material.chip.ChipGroup
 
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
@@ -27,13 +27,13 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.util.*
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, SpinnerDialogSelectedItemListener<CountyFipsData?> {
 
     var mAdapter = MainAdapter()
     lateinit var mRecyclerView : RecyclerView
-    var mRegions : List<String>? = null
+    var mZoneCounts : Map<String, Int>? = null
+    var mAvailableZones : Map<String, List<CountyFipsData>>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,20 +52,29 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         nav_view.setNavigationItemSelectedListener(this)
 
+        /*val chipGroup = findViewById(R.id.main_chip_group) as ChipGroup
+        val chip = Chip(this.applicationContext)
+        chip.text = "A Chip"
+        chipGroup?.addView(chip, 0)*/
+
+        val context = this.applicationContext
+        mAvailableZones = FipsDataLoader().loadFipsData(context)
+
+
         val retrofit = Retrofit.Builder()
                 .baseUrl("https://api.weather.gov")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
 
         val service = retrofit.create(WeatherApi::class.java)
-        service.getLocationCodes().enqueue(object:Callback<AlertCountsByLocation>{
+        service.getAlertCounts().enqueue(object:Callback<AlertCountsByLocation>{
             override fun onResponse(call: Call<AlertCountsByLocation>?, response: Response<AlertCountsByLocation>?) {
-                mRegions = response?.body()?.areas?.keys?.distinct()
+                mZoneCounts = response?.body()?.zones
                 showRegionSelectDialog()
             }
 
             override fun onFailure(call: Call<AlertCountsByLocation>?, t: Throwable?) {
-                Toast.makeText(applicationContext, "Failed", Toast.LENGTH_LONG)
+                showRegionSelectDialog()
             }
         })
 
@@ -78,12 +87,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     fun showRegionSelectDialog()
     {
-        val context = this.applicationContext
         val dialog = SpinnderDialogFragment()
 
-        val data = FipsDataLoader().loadFipsData(context)
-        dialog.mCountyMap = data
-        dialog.mTitle = "Select Region"
+        dialog.mCountyMap = mAvailableZones!!
+        dialog.mZoneCountMap = mZoneCounts
+        dialog.mStates = mAvailableZones!!.keys.toList().sorted()
+        dialog.mTitle = "Select Zone"
         dialog.mListener = this
         dialog.show(supportFragmentManager, "state_select_fragment")
     }
@@ -96,7 +105,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
             val service = retrofit.create(WeatherApi::class.java)
 
-            service.getAlertByZone(it.state+"Z"+it.countFips).enqueue(object:Callback<AreaAlert> {
+            service.getAlertByZone(it.getZoneCode()).enqueue(object:Callback<AreaAlert> {
                 override fun onFailure(call: Call<AreaAlert>?, t: Throwable?) {
 
                 }
