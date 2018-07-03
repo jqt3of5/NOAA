@@ -14,7 +14,7 @@ class FipsDataLoader {
         for (line in lines)
         {
             val split = line.split(",")
-            val data = CountyFipsData(split[0], split[1].toInt(), split[2].toInt(), split[3], split[4])
+            val data = CountyFipsData(split[0], split[1], split[2], split[3], split[4])
             if (!map.containsKey(data.state))
             {
                 map.put(data.state, mutableListOf())

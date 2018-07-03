@@ -1,5 +1,5 @@
 package com.example.jqt3of5.noaa
 
-class CountyFipsData(var state : String, var stateFips : Int, var countFips : Int, var countyName : String, var fipsClass : String) {
+class CountyFipsData(var state : String, var stateFips : String, var countFips : String, var countyName : String, var fipsClass : String) {
 
 }
