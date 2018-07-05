@@ -19,6 +19,7 @@ class AlertProperties{
     var severity : String = ""
     var certainty : String = ""
     var event : String = ""
+    var instruction: String = ""
     var sent : Date? = null
     var effective: Date? = null
     var expires : Date? = null
