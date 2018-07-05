@@ -28,7 +28,7 @@ class MainAdapter : RecyclerView.Adapter<MainAdapter.ViewHolder>()
         val properties = areaData?.features?.get(position)?.properties
         holder.notificationView.dateTextView.text = properties?.sent?.toString()
         holder.notificationView.eventTextView.text = properties?.event
-        holder.notificationView.areaDescriptionTextView.text = properties?.description?.replace("\n", "")
+        holder.notificationView.areaDescriptionTextView.text = properties?.description?.replace("\n", " ")
        when(properties?.severity)
         {
             "Severe" -> holder.notificationView.setSeverity(Severity.Severe)
