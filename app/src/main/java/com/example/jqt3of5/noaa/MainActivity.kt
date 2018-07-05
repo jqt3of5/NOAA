@@ -1,5 +1,6 @@
 package com.example.jqt3of5.noaa
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.design.widget.NavigationView
@@ -17,8 +18,6 @@ import com.example.jqt3of5.noaa.RegionSelect.CountyFipsData
 import com.example.jqt3of5.noaa.RegionSelect.FipsDataLoader
 import com.example.jqt3of5.noaa.RegionSelect.SpinnderDialogFragment
 import com.example.jqt3of5.noaa.RegionSelect.SpinnerDialogSelectedItemListener
-//import com.google.android.material.chip.Chip
-//import com.google.android.material.chip.ChipGroup
 
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
@@ -51,11 +50,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         toggle.syncState()
 
         nav_view.setNavigationItemSelectedListener(this)
-
-        /*val chipGroup = findViewById(R.id.main_chip_group) as ChipGroup
-        val chip = Chip(this.applicationContext)
-        chip.text = "A Chip"
-        chipGroup?.addView(chip, 0)*/
 
         val context = this.applicationContext
         mAvailableZones = FipsDataLoader().loadFipsData(context)
@@ -96,6 +90,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         dialog.mListener = this
         dialog.show(supportFragmentManager, "state_select_fragment")
     }
+
+    fun showPreferences()
+    {
+       val intent = Intent(this, NotificationPreferencesActivity::class.java)
+        startActivity(intent)
+    }
+
     override fun ItemSelected(selection: CountyFipsData?) {
         selection?.let{
             val retrofit = Retrofit.Builder()
@@ -137,7 +138,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         when (item.itemId) {
-            R.id.action_settings -> return true
+            R.id.action_settings -> {
+                showPreferences()
+                return true
+            }
             R.id.action_select_region -> {
                 showRegionSelectDialog()
                 return true

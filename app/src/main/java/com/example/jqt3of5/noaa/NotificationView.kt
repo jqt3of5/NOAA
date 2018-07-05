@@ -35,6 +35,7 @@ class NotificationView(context:Context, attrSet:AttributeSet ) :ConstraintLayout
     lateinit var dateTextView : TextView
     lateinit var eventTypeIcon : ImageView
     lateinit var areaDescriptionTextView : TextView
+    lateinit var zoneTextView : TextView
 
     override fun onFinishInflate() {
         super.onFinishInflate()
@@ -45,6 +46,7 @@ class NotificationView(context:Context, attrSet:AttributeSet ) :ConstraintLayout
         eventTypeIcon = findViewById(R.id.event_icon) as ImageView
         eventTypeIcon.visibility = GONE
         areaDescriptionTextView = findViewById(R.id.notification_area_description)
+        zoneTextView = findViewById(R.id.notification_zone)
 
     }
 

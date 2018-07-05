@@ -9,6 +9,7 @@ import com.example.jqt3of5.noaa.Api.DataObjects.AreaAlert
 class MainAdapter : RecyclerView.Adapter<MainAdapter.ViewHolder>()
 {
     var areaData : AreaAlert? = null
+    var zoneName : String? = null
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
 
         val inflater = parent.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
@@ -29,6 +30,8 @@ class MainAdapter : RecyclerView.Adapter<MainAdapter.ViewHolder>()
         holder.notificationView.dateTextView.text = properties?.sent?.toString()
         holder.notificationView.eventTextView.text = properties?.event
         holder.notificationView.areaDescriptionTextView.text = properties?.description?.replace("\n", " ")
+        holder.notificationView.zoneTextView.text = zoneName
+
        when(properties?.severity)
         {
             "Severe" -> holder.notificationView.setSeverity(Severity.Severe)
