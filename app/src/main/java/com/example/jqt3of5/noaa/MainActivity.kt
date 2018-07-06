@@ -72,6 +72,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val preferences = PreferenceManager.getDefaultSharedPreferences(this)
         val zones = preferences.getStringSet("ews_zones", emptySet())
 
+        mAdapter.clearAlerts()
         for (zone in zones)
         {
             service.getAlertByZone(zone).enqueue(object: Callback<AreaAlert> {
@@ -81,8 +82,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 override fun onResponse(call: Call<AreaAlert>?, response: Response<AreaAlert>?) {
                     response?.body()?.features?.firstOrNull()?.let {
                         mAdapter?.addAlert(zone, it)
-                        mAdapter?.notifyDataSetChanged()
                     }
+                    mAdapter?.notifyDataSetChanged()
                 }
             })
         }

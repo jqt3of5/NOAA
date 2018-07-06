@@ -13,6 +13,11 @@ class MainAdapter : RecyclerView.Adapter<MainAdapter.ViewHolder>()
     private var features : MutableList<AlertFeature> = mutableListOf()
     private var zoneCodes : MutableList<String> = mutableListOf()
 
+    fun clearAlerts()
+    {
+        features.clear()
+        zoneCodes.clear()
+    }
     fun addAlert(code :String, feature : AlertFeature)
     {
         features.add(0, feature)
