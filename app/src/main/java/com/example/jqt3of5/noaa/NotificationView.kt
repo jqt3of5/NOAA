@@ -3,6 +3,7 @@ package com.example.jqt3of5.noaa
 import android.content.Context
 import android.graphics.Color
 import android.support.constraint.ConstraintLayout
+import android.support.v7.widget.CardView
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.ImageView
@@ -28,7 +29,7 @@ enum class Severity(val colorId : Int, var str : String)
     Moderate(R.color.colorModerate, "Moderate"),
     Unknown(R.color.colorPrimaryDark, "Unknown")
 }
-class NotificationView(context:Context, attrSet:AttributeSet ) :ConstraintLayout(context, attrSet) {
+class NotificationView(context:Context, attrSet:AttributeSet ) : CardView(context, attrSet) {
 
     lateinit var eventTextView : TextView
     lateinit var severityTextView : TextView

@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     android:key="national_weather_service_prefs">
-
-    <PreferenceCategory android:title="National Weather Service">
         <SwitchPreference
             android:defaultValue="true"
             android:key="nws_severe_alerts"
@@ -15,6 +13,4 @@
             android:defaultValue="true"
             android:key="nws_daily_weather"
             android:title="Daily Weather" />
-    </PreferenceCategory>
-
 </PreferenceScreen>

@@ -1,17 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="16dp">
-
-    <android.support.v7.widget.CardView
-        android:id="@+id/nws_prefs_card_view"
+    android:layout_height="wrap_content">
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:cardCornerRadius="4dp"
-        android:layout_marginBottom="24dp">
+        android:layout_height="match_parent"
+        android:padding="16dp">
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/nws_prefs_card_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="4dp"
+            android:layout_marginBottom="24dp">
             <fragment
                 android:id="@+id/nws_prefs_fragment"
                 android:name="com.example.jqt3of5.noaa.Preferences.NationalWeatherServicePrefsFragment"
@@ -19,20 +23,31 @@
                 android:layout_height="wrap_content"
                 android:padding="16dp" />
 
-    </android.support.v7.widget.CardView>
+        </android.support.v7.widget.CardView>
 
-    <android.support.v7.widget.CardView
-        android:id="@+id/nws_locations_card_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:cardCornerRadius="4dp">
+        <android.support.v7.widget.CardView
+            android:id="@+id/nws_locations_card_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="4dp">
 
-            <fragment
-                android:id="@+id/nws_locations_fragment"
-                android:name="com.example.jqt3of5.noaa.Preferences.NationalWeatherServiceLocationsFragment"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="16dp" />
+                android:orientation="vertical">
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/nws_locations_recycler_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
-    </android.support.v7.widget.CardView>
-</LinearLayout>
+                </android.support.v7.widget.RecyclerView>
+                <Button
+                    android:id="@+id/nws_add_location_button"
+                    style="@style/Widget.AppCompat.Button.Borderless"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="+ Add Location" />
+            </LinearLayout>
+        </android.support.v7.widget.CardView>
+    </LinearLayout>
+</ScrollView>

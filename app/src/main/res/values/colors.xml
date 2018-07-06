@@ -5,4 +5,5 @@
     <color name="colorAccent">#FFb000</color>
     <color name="colorSevere">#FF0000</color>
     <color name="colorModerate">#FFb000</color>
+    <color name="color_dark_text">#000000</color>
 </resources>

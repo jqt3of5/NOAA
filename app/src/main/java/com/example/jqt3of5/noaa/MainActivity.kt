@@ -1,12 +1,14 @@
 package com.example.jqt3of5.noaa
 
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.preference.PreferenceManager
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.Menu
@@ -28,12 +30,11 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, SpinnerDialogSelectedItemListener<CountyFipsData?> {
+class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     var mAdapter = MainAdapter()
     lateinit var mRecyclerView : RecyclerView
-    var mZoneCounts : Map<String, Int>? = null
-    var mAvailableZones : Map<String, List<CountyFipsData>>? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,26 +53,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         nav_view.setNavigationItemSelectedListener(this)
 
-        val context = this.applicationContext
-        mAvailableZones = FipsDataLoader().loadFipsData(context)
-
-
-        val retrofit = Retrofit.Builder()
-                .baseUrl("https://api.weather.gov")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build()
-
-        val service = retrofit.create(WeatherApi::class.java)
-        service.getAlertCounts().enqueue(object:Callback<AlertCountsByLocation>{
-            override fun onResponse(call: Call<AlertCountsByLocation>?, response: Response<AlertCountsByLocation>?) {
-                mZoneCounts = response?.body()?.zones
-                showRegionSelectDialog()
-            }
-
-            override fun onFailure(call: Call<AlertCountsByLocation>?, t: Throwable?) {
-                showRegionSelectDialog()
-            }
-        })
+        FipsDataLoader.loadFipsData(this)
 
         val layout =  LinearLayoutManager(this)
         mRecyclerView = findViewById<RecyclerView>(R.id.main_recycler_view).apply {
@@ -80,43 +62,36 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
-    fun showRegionSelectDialog()
-    {
-        val dialog = SpinnderDialogFragment()
+    override fun onResume() {
+        super.onResume()
+        val retrofit = Retrofit.Builder()
+                .baseUrl("https://api.weather.gov")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+        val service = retrofit.create(WeatherApi::class.java)
+        val preferences = PreferenceManager.getDefaultSharedPreferences(this)
+        val zones = preferences.getStringSet("ews_zones", emptySet())
 
-        dialog.mCountyMap = mAvailableZones!!
-        dialog.mZoneCountMap = mZoneCounts
-        dialog.mStates = mAvailableZones!!.keys.toList().sorted()
-        dialog.mTitle = "Select Zone"
-        dialog.mListener = this
-        dialog.show(supportFragmentManager, "state_select_fragment")
-    }
-
-    fun showPreferences()
-    {
-       val intent = Intent(this, NotificationPreferencesActivity::class.java)
-        startActivity(intent)
-    }
-
-    override fun ItemSelected(selection: CountyFipsData?) {
-        selection?.let{
-            val retrofit = Retrofit.Builder()
-                    .baseUrl("https://api.weather.gov")
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build()
-
-            val service = retrofit.create(WeatherApi::class.java)
-
-            service.getAlertByZone(it.getZoneCode()).enqueue(object:Callback<AreaAlert> {
+        for (zone in zones)
+        {
+            service.getAlertByZone(zone).enqueue(object: Callback<AreaAlert> {
                 override fun onFailure(call: Call<AreaAlert>?, t: Throwable?) {
 
                 }
                 override fun onResponse(call: Call<AreaAlert>?, response: Response<AreaAlert>?) {
-                    mAdapter?.areaData = response?.body()
-                    mAdapter?.notifyDataSetChanged()
+                    response?.body()?.features?.firstOrNull()?.let {
+                        mAdapter?.addAlert(zone, it)
+                        mAdapter?.notifyDataSetChanged()
+                    }
                 }
             })
         }
+    }
+
+    fun showPreferences()
+    {
+        val intent = Intent(this, NotificationPreferencesActivity::class.java)
+        startActivity(intent)
     }
 
     override fun onBackPressed() {
@@ -142,10 +117,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 showPreferences()
                 return true
             }
-            R.id.action_select_region -> {
-                showRegionSelectDialog()
-                return true
-            }
+
             else -> return super.onOptionsItemSelected(item)
         }
     }
