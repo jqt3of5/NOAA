@@ -14,6 +14,7 @@ import android.view.MenuItem
 import com.example.jqt3of5.noaa.Api.WeatherApi
 import com.example.jqt3of5.noaa.Api.DataObjects.AlertCountsByLocation
 import com.example.jqt3of5.noaa.Api.DataObjects.AreaAlert
+import com.example.jqt3of5.noaa.Preferences.NotificationPreferencesActivity
 import com.example.jqt3of5.noaa.RegionSelect.CountyFipsData
 import com.example.jqt3of5.noaa.RegionSelect.FipsDataLoader
 import com.example.jqt3of5.noaa.RegionSelect.SpinnderDialogFragment
@@ -116,7 +117,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 }
             })
         }
-
     }
 
     override fun onBackPressed() {

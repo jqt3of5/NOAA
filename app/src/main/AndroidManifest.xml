@@ -20,10 +20,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".NotificationPreferencesActivity"
+        <activity android:name=".Preferences.NotificationPreferencesActivity"
             android:label="Settings"
             android:theme = "@style/AppTheme"
             />
+        <activity android:name=".Preferences.NationalWeatherServicePrefsActivity"
+            android:label="National Weather Service"
+            android:theme = "@style/AppTheme"/>
     </application>
 
 </manifest>
