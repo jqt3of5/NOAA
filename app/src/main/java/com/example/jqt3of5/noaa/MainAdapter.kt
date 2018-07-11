@@ -6,6 +6,8 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.example.jqt3of5.noaa.Api.DataObjects.AlertFeature
 import com.example.jqt3of5.noaa.RegionSelect.FipsDataLoader
+import com.example.jqt3of5.noaa.Weather.NotificationView
+import com.example.jqt3of5.noaa.Weather.Severity
 
 class MainAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>()
 {

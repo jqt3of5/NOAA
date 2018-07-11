@@ -27,6 +27,7 @@
         <activity android:name=".Preferences.NationalWeatherServicePrefsActivity"
             android:label="National Weather Service"
             android:theme = "@style/AppTheme.Preferences"/>
+        <activity android:name=".Weather.WeatherActivity" />
     </application>
 
 </manifest>
