@@ -29,7 +29,7 @@ enum class Severity(val colorId : Int, var str : String)
     Moderate(R.color.colorModerate, "Moderate"),
     Unknown(R.color.colorPrimaryDark, "Unknown")
 }
-class NotificationView(context:Context, attrSet:AttributeSet ) : CardView(context, attrSet) {
+class NationalWeatherServiceNotificationView(context:Context, attrSet:AttributeSet ) : CardView(context, attrSet) {
 
     lateinit var eventTextView : TextView
     lateinit var severityTextView : TextView

@@ -15,6 +15,7 @@ import android.view.Menu
 import android.view.MenuItem
 import com.example.jqt3of5.noaa.Api.WeatherApi
 import com.example.jqt3of5.noaa.Api.DataObjects.AlertCountsByLocation
+import com.example.jqt3of5.noaa.Api.DataObjects.AlertFeature
 import com.example.jqt3of5.noaa.Api.DataObjects.AreaAlert
 import com.example.jqt3of5.noaa.Preferences.NotificationPreferencesActivity
 import com.example.jqt3of5.noaa.RegionSelect.CountyFipsData
@@ -35,6 +36,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     var mAdapter = MainAdapter()
     lateinit var mRecyclerView : RecyclerView
 
+    var mData : MutableList<AlertFeature> = mutableListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,7 +74,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val preferences = PreferenceManager.getDefaultSharedPreferences(this)
         val zones = preferences.getStringSet("ews_zones", emptySet())
 
-        mAdapter.clearAlerts()
         for (zone in zones)
         {
             service.getAlertByZone(zone).enqueue(object: Callback<AreaAlert> {
@@ -81,9 +82,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 }
                 override fun onResponse(call: Call<AreaAlert>?, response: Response<AreaAlert>?) {
                     response?.body()?.features?.firstOrNull()?.let {
-                        mAdapter?.addAlert(zone, it)
+                        if (!mData.contains(it))
+                        {
+                            mAdapter?.addAlert(zone, it)
+                            mAdapter?.notifyDataSetChanged()
+                        }
                     }
-                    mAdapter?.notifyDataSetChanged()
                 }
             })
         }
