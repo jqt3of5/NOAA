@@ -4,6 +4,7 @@ import java.util.*
 
 class AreaAlert {
     var title:String = ""
+    var zoneCode: String = ""
     var features : Array<AlertFeature>? = null
 }
 

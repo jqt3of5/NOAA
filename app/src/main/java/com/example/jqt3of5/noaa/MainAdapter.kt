@@ -1,13 +1,14 @@
 package com.example.jqt3of5.noaa
 
 import android.content.Context
+import android.support.v7.widget.CardView
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import com.example.jqt3of5.noaa.Api.DataObjects.AlertFeature
 import com.example.jqt3of5.noaa.RegionSelect.FipsDataLoader
-import com.example.jqt3of5.noaa.Weather.NotificationView
-import com.example.jqt3of5.noaa.Weather.Severity
+import com.example.jqt3of5.noaa.Weather.WeatherAlertView
 
 class MainAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>()
 {
@@ -35,12 +36,13 @@ class MainAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>()
         when (NotificationViewTypes.values()[viewType])
         {
             NotificationViewTypes.NationalWeatherServiceAlerts -> {
-                val view =  inflater.inflate(R.layout.nws_notification_view, parent, false) as NationalWeatherServiceNotificationView
-                return NWSViewHolder(view)
+                val view =  inflater.inflate(R.layout.weather_alert_view, parent, false) as NationalWeatherServiceNotificationView
+
+                return WeatherAlertViewHolder(view)
             }
             NotificationViewTypes.EmergencyZone -> {
                 val view =  inflater.inflate(R.layout.ez_notification_view, parent, false) as EmergencyZoneNotificationView
-                return EZViewHolder(view)
+                return NotificationViewHolder(view)
             }
         }
     }
@@ -54,12 +56,14 @@ class MainAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>()
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
 
-        when (holder)
+        val viewType = getItemViewType(position)
+        val type = NotificationViewTypes.values()[viewType]
+        when (type)
         {
-            is EZViewHolder -> {
+            NotificationViewTypes.NationalWeatherServiceAlerts -> {
 
             }
-            is NWSViewHolder -> {
+            NotificationViewTypes.EmergencyZone  -> {
                 val properties = features?.get(position)?.properties
                 holder.notificationView.dateTextView.text = properties?.sent?.toString()
                 holder.notificationView.eventTextView.text = properties?.event
@@ -76,7 +80,5 @@ class MainAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>()
         }
     }
 
-    class EZViewHolder(val notificationView : EmergencyZoneNotificationView) : RecyclerView.ViewHolder(notificationView)
-    class NWSViewHolder(val notificationView : NationalWeatherServiceNotificationView) : RecyclerView.ViewHolder(notificationView)
-
+    class NotificationViewHolder(val notificationView : CardView) : RecyclerView.ViewHolder(notificationView)
 }
