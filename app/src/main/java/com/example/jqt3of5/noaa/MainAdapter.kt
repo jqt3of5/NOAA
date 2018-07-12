@@ -37,8 +37,7 @@ class MainAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>()
         {
             NotificationViewTypes.NationalWeatherServiceAlerts -> {
                 val view =  inflater.inflate(R.layout.weather_alert_view, parent, false) as NationalWeatherServiceNotificationView
-
-                return WeatherAlertViewHolder(view)
+                return NotificationViewHolder(view)
             }
             NotificationViewTypes.EmergencyZone -> {
                 val view =  inflater.inflate(R.layout.ez_notification_view, parent, false) as EmergencyZoneNotificationView
@@ -56,26 +55,15 @@ class MainAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>()
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
 
-        val viewType = getItemViewType(position)
-        val type = NotificationViewTypes.values()[viewType]
-        when (type)
+        val view = holder.itemView
+        when (view)
         {
-            NotificationViewTypes.NationalWeatherServiceAlerts -> {
-
+            is NationalWeatherServiceNotificationView -> {
+                //val properties = features
+                //view.weatherAlertView.bind(properties)
             }
-            NotificationViewTypes.EmergencyZone  -> {
-                val properties = features?.get(position)?.properties
-                holder.notificationView.dateTextView.text = properties?.sent?.toString()
-                holder.notificationView.eventTextView.text = properties?.event
-                holder.notificationView.areaDescriptionTextView.text = properties?.description?.replace("\n", " ")
-                holder.notificationView.zoneTextView.text = FipsDataLoader.zoneToCountyMap?.get(zoneCodes[position])
+            is EmergencyZoneNotificationView -> {
 
-                when(properties?.severity)
-                {
-                    "Severe" -> holder.notificationView.setSeverity(Severity.Severe)
-                    "Moderate" -> holder.notificationView.setSeverity(Severity.Moderate)
-                    else -> holder.notificationView.setSeverity(Severity.Unknown)
-                }
             }
         }
     }

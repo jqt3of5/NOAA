@@ -6,7 +6,11 @@ import android.support.v7.widget.CardView
 import android.util.AttributeSet
 import android.widget.ImageView
 import android.widget.TextView
+import com.example.jqt3of5.noaa.Api.DataObjects.AlertFeature
+import com.example.jqt3of5.noaa.Api.DataObjects.AlertProperties
+import com.example.jqt3of5.noaa.Api.DataObjects.AreaAlert
 import com.example.jqt3of5.noaa.R
+import com.example.jqt3of5.noaa.RegionSelect.FipsDataLoader
 
 /*enum class NotificationEvent(val redId : Int)
 {
@@ -50,6 +54,25 @@ class WeatherAlertView(context:Context, attrSet:AttributeSet ) : ConstraintLayou
 
     }
 
+    fun bind(property : AlertProperties)
+    {
+        dateTextView.text = property?.sent?.toString()
+        eventTextView.text = property?.event
+        areaDescriptionTextView.text = property?.description?.replace("\n", " ")
+
+        when(property?.severity)
+        {
+            "Severe" -> setSeverity(Severity.Severe)
+            "Moderate" -> setSeverity(Severity.Moderate)
+            else -> setSeverity(Severity.Unknown)
+        }
+    }
+
+    fun bind(property : AlertProperties, zoneCode : String)
+    {
+        zoneTextView.text = FipsDataLoader.zoneToCountyMap?.get(zoneCode)
+        bind(property)
+    }
     fun setSeverity(severity : Severity)
     {
         severityTextView.text = severity.str

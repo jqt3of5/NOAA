@@ -6,4 +6,5 @@ import android.util.AttributeSet
 
 //The View for displaying weather data for one specific region
 class DailyWeatherView(context : Context, attrSet : AttributeSet) : ConstraintLayout(context, attrSet) {
+
 }

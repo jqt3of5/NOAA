@@ -33,21 +33,9 @@ class WeatherAlertsAdapter : RecyclerView.Adapter<WeatherAlertsAdapter.WeatherAl
         val view = holder.itemView as WeatherAlertView
 
         weatherAlert?.features?.get(position)?.properties?.let {
-            view.dateTextView.text = it?.sent?.toString()
-            view.eventTextView.text = it?.event
-            view.areaDescriptionTextView.text = it?.description?.replace("\n", " ")
-            view.zoneTextView.text = FipsDataLoader.zoneToCountyMap?.get(weatherAlert?.zoneCode)
-
-            when(it?.severity)
-            {
-                "Severe" -> view.setSeverity(Severity.Severe)
-                "Moderate" -> view.setSeverity(Severity.Moderate)
-                else -> view.setSeverity(Severity.Unknown)
-            }
+            view.bind(it)
         }
     }
 
     class WeatherAlertViewHolder(view : WeatherAlertView) : RecyclerView.ViewHolder(view)
-
-
 }
