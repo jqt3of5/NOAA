@@ -2,13 +2,10 @@ package com.example.jqt3of5.noaa.Weather
 
 import android.content.Context
 import android.support.constraint.ConstraintLayout
-import android.support.v7.widget.CardView
 import android.util.AttributeSet
 import android.widget.ImageView
 import android.widget.TextView
-import com.example.jqt3of5.noaa.Api.DataObjects.AlertFeature
-import com.example.jqt3of5.noaa.Api.DataObjects.AlertProperties
-import com.example.jqt3of5.noaa.Api.DataObjects.AreaAlert
+import com.example.jqt3of5.noaa.Repository.Api.DataObjects.AlertProperties
 import com.example.jqt3of5.noaa.R
 import com.example.jqt3of5.noaa.RegionSelect.FipsDataLoader
 

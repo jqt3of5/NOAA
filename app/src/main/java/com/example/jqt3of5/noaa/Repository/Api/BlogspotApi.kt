@@ -1,11 +1,9 @@
-package com.example.jqt3of5.noaa.Api
+package com.example.jqt3of5.noaa.Repository.Api
 
 
-import com.example.jqt3of5.noaa.Api.DataObjects.BlogPosts
+import com.example.jqt3of5.noaa.Repository.Api.DataObjects.BlogPosts
 import io.reactivex.Observable
-import retrofit2.Call
 import retrofit2.http.GET
-import retrofit2.http.Headers
 import retrofit2.http.Path
 import retrofit2.http.Query
 

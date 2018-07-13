@@ -1,7 +1,6 @@
 package com.example.jqt3of5.noaa
 
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.design.widget.NavigationView
@@ -13,21 +12,16 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.Menu
 import android.view.MenuItem
-import com.example.jqt3of5.noaa.Api.WeatherApi
-import com.example.jqt3of5.noaa.Api.DataObjects.AlertCountsByLocation
-import com.example.jqt3of5.noaa.Api.DataObjects.AlertFeature
-import com.example.jqt3of5.noaa.Api.DataObjects.AreaAlert
+import com.example.jqt3of5.noaa.Repository.Api.WeatherApi
+import com.example.jqt3of5.noaa.Repository.Api.DataObjects.AlertFeature
+import com.example.jqt3of5.noaa.Repository.Data.MainDatabase
 import com.example.jqt3of5.noaa.Preferences.NotificationPreferencesActivity
-import com.example.jqt3of5.noaa.RegionSelect.CountyFipsData
 import com.example.jqt3of5.noaa.RegionSelect.FipsDataLoader
-import com.example.jqt3of5.noaa.RegionSelect.SpinnderDialogFragment
-import com.example.jqt3of5.noaa.RegionSelect.SpinnerDialogSelectedItemListener
+import com.example.jqt3of5.noaa.Repository.Api.NetworkingFactory
+import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -55,6 +49,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         nav_view.setNavigationItemSelectedListener(this)
 
+        MainDatabase.getInstance(this)
         FipsDataLoader.loadFipsData(this)
 
         val layout =  LinearLayoutManager(this)
@@ -66,31 +61,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onResume() {
         super.onResume()
-        val retrofit = Retrofit.Builder()
-                .baseUrl("https://api.weather.gov")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build()
-        val service = retrofit.create(WeatherApi::class.java)
+
         val preferences = PreferenceManager.getDefaultSharedPreferences(this)
         val zones = preferences.getStringSet("ews_zones", emptySet())
 
-        for (zone in zones)
-        {
-            service.getAlertByZone(zone).enqueue(object: Callback<AreaAlert> {
-                override fun onFailure(call: Call<AreaAlert>?, t: Throwable?) {
-
-                }
-                override fun onResponse(call: Call<AreaAlert>?, response: Response<AreaAlert>?) {
-                    response?.body()?.features?.firstOrNull()?.let {
-                        if (!mData.contains(it))
-                        {
-                            mAdapter?.addAlert(zone, it)
-                            mAdapter?.notifyDataSetChanged()
-                        }
-                    }
-                }
-            })
-        }
     }
 
     fun showPreferences()

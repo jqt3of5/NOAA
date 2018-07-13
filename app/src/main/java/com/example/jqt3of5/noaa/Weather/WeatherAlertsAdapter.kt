@@ -4,16 +4,14 @@ import android.content.Context
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import com.example.jqt3of5.noaa.Api.DataObjects.AreaAlert
-import com.example.jqt3of5.noaa.Preferences.LocationView
+import com.example.jqt3of5.noaa.Repository.Api.DataObjects.WeatherServiceZone
 import com.example.jqt3of5.noaa.R
-import com.example.jqt3of5.noaa.RegionSelect.FipsDataLoader
 
 class WeatherAlertsAdapter : RecyclerView.Adapter<WeatherAlertsAdapter.WeatherAlertViewHolder>()
 {
-    private var weatherAlert : AreaAlert? = null
+    private var weatherAlert : WeatherServiceZone? = null
 
-    fun updateWeatherAlerts(alert : AreaAlert)
+    fun updateWeatherAlerts(alert : WeatherServiceZone)
     {
         weatherAlert = alert
         notifyDataSetChanged()

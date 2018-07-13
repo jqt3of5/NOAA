@@ -5,10 +5,7 @@ import android.support.v7.widget.CardView
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.LinearLayout
-import com.example.jqt3of5.noaa.Api.DataObjects.AlertFeature
-import com.example.jqt3of5.noaa.RegionSelect.FipsDataLoader
-import com.example.jqt3of5.noaa.Weather.WeatherAlertView
+import com.example.jqt3of5.noaa.Repository.Api.DataObjects.AlertFeature
 
 class MainAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>()
 {

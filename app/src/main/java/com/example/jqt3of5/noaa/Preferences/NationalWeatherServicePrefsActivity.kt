@@ -1,14 +1,11 @@
 package com.example.jqt3of5.noaa.Preferences
 
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.preference.PreferenceManager
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.widget.Button
-import com.example.jqt3of5.noaa.Api.DataObjects.AreaAlert
-import com.example.jqt3of5.noaa.Api.WeatherApi
 import com.example.jqt3of5.noaa.R
 import com.example.jqt3of5.noaa.RegionSelect.CountyFipsData
 import com.example.jqt3of5.noaa.RegionSelect.FipsDataLoader

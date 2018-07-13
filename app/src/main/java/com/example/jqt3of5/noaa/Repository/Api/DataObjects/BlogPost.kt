@@ -1,4 +1,4 @@
-package com.example.jqt3of5.noaa.Api.DataObjects
+package com.example.jqt3of5.noaa.Repository.Api.DataObjects
 
 import java.util.*
 
