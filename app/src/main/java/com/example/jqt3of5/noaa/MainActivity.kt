@@ -18,11 +18,13 @@ import com.example.jqt3of5.noaa.Repository.Data.MainDatabase
 import com.example.jqt3of5.noaa.Preferences.NotificationPreferencesActivity
 import com.example.jqt3of5.noaa.RegionSelect.FipsDataLoader
 import com.example.jqt3of5.noaa.Repository.AlertsRepository
+import com.example.jqt3of5.noaa.Repository.Data.Entities.Notification
 import com.example.jqt3of5.noaa.Repository.Data.Entities.WeatherAlert
 import io.reactivex.schedulers.Schedulers
 
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
+import java.util.*
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -85,8 +87,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         val preferences = PreferenceManager.getDefaultSharedPreferences(this)
         val zones = preferences.getStringSet("ews_zones", emptySet())
+
         zones.forEach {
-            AlertsRepository().getAlertForZone(it)
+            AlertsRepository().getAlertForZone(it).observe(this, Observer {
+                it?.let {
+                    MainDatabase.getInstance().notifications().insert(Notification(WeatherAlert.TABLE_NAME, it.first().id, Date()))
+                }
+            })
         }
     }
 
