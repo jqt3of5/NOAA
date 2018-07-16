@@ -6,6 +6,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.example.jqt3of5.noaa.Repository.Api.DataObjects.AlertFeature
+import com.example.jqt3of5.noaa.Repository.Data.Entities.WeatherAlert
 
 class MainAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>()
 {
@@ -13,13 +14,15 @@ class MainAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>()
     {
         NationalWeatherServiceAlerts, EmergencyZone,
     }
-    private var features : MutableList<AlertFeature> = mutableListOf()
-    private var zoneCodes : MutableList<String> = mutableListOf()
+    private var alerts : MutableList<WeatherAlert> = mutableListOf()
 
-    fun addAlert(code :String, feature : AlertFeature)
+    fun clear()
     {
-        features.add(0, feature)
-        zoneCodes.add(0, code)
+        alerts.clear()
+    }
+    fun addAlert(alert : WeatherAlert)
+    {
+        alerts.add(0, alert)
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -33,7 +36,7 @@ class MainAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>()
         when (NotificationViewTypes.values()[viewType])
         {
             NotificationViewTypes.NationalWeatherServiceAlerts -> {
-                val view =  inflater.inflate(R.layout.weather_alert_view, parent, false) as NationalWeatherServiceNotificationView
+                val view =  inflater.inflate(R.layout.nws_notification_view, parent, false) as NationalWeatherServiceNotificationView
                 return NotificationViewHolder(view)
             }
             NotificationViewTypes.EmergencyZone -> {
@@ -44,10 +47,7 @@ class MainAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>()
     }
 
     override fun getItemCount(): Int {
-       features?.let {
-            return it.count()
-        }
-       return 0
+       return alerts.count()
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
@@ -56,8 +56,7 @@ class MainAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>()
         when (view)
         {
             is NationalWeatherServiceNotificationView -> {
-                //val properties = features
-                //view.weatherAlertView.bind(properties)
+                view.weatherAlertView.bind(alerts[position])
             }
             is EmergencyZoneNotificationView -> {
 

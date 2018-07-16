@@ -18,6 +18,7 @@ interface WeatherApi
 {
     @Headers("User-Agent: jqt3of5@gmail.com", "Accept: application/vnd.github.v3.full+json")
     @GET("/alerts/active/zone/{zone}")
+    //Let's use Live data instead of RxJava!
     fun getAlertByZone(@Path("zone") zone : String) : Observable<WeatherServiceZone>
 
 

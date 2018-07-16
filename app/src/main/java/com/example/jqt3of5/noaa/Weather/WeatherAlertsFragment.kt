@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.example.jqt3of5.noaa.Repository.Api.DataObjects.WeatherServiceZone
 import com.example.jqt3of5.noaa.R
+import com.example.jqt3of5.noaa.Repository.Data.Entities.WeatherAlert
 
 class WeatherAlertsFragment : Fragment()
 {
@@ -16,7 +17,7 @@ class WeatherAlertsFragment : Fragment()
     lateinit var alertList : RecyclerView
     lateinit var adapter : WeatherAlertsAdapter
 
-    private var mAlert : WeatherServiceZone? = null
+    private var mAlert : List<WeatherAlert>? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.weather_fragment, container, true)
@@ -34,7 +35,7 @@ class WeatherAlertsFragment : Fragment()
         return view
     }
 
-    fun updateAlert(alert : WeatherServiceZone)
+    fun updateAlert(alert : List<WeatherAlert>)
     {
         mAlert = alert
         adapter?.updateWeatherAlerts(alert)

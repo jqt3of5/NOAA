@@ -6,14 +6,15 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.example.jqt3of5.noaa.Repository.Api.DataObjects.WeatherServiceZone
 import com.example.jqt3of5.noaa.R
+import com.example.jqt3of5.noaa.Repository.Data.Entities.WeatherAlert
 
 class WeatherAlertsAdapter : RecyclerView.Adapter<WeatherAlertsAdapter.WeatherAlertViewHolder>()
 {
-    private var weatherAlert : WeatherServiceZone? = null
+    private var weatherAlerts : List<WeatherAlert>? = null
 
-    fun updateWeatherAlerts(alert : WeatherServiceZone)
+    fun updateWeatherAlerts(alerts : List<WeatherAlert>)
     {
-        weatherAlert = alert
+        weatherAlerts = alerts
         notifyDataSetChanged()
     }
 
@@ -24,13 +25,13 @@ class WeatherAlertsAdapter : RecyclerView.Adapter<WeatherAlertsAdapter.WeatherAl
     }
 
     override fun getItemCount(): Int {
-        return weatherAlert?.features?.size ?: 0
+        return weatherAlerts?.count() ?: 0
     }
 
     override fun onBindViewHolder(holder: WeatherAlertViewHolder, position: Int) {
         val view = holder.itemView as WeatherAlertView
 
-        weatherAlert?.features?.get(position)?.properties?.let {
+        weatherAlerts?.get(position)?.let {
             view.bind(it)
         }
     }

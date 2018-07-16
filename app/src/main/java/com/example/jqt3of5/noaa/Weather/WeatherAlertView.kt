@@ -8,6 +8,11 @@ import android.widget.TextView
 import com.example.jqt3of5.noaa.Repository.Api.DataObjects.AlertProperties
 import com.example.jqt3of5.noaa.R
 import com.example.jqt3of5.noaa.RegionSelect.FipsDataLoader
+import com.example.jqt3of5.noaa.Repository.Data.Entities.WeatherAlert
+import android.support.v4.content.ContextCompat.getSystemService
+import android.view.LayoutInflater
+
+
 
 /*enum class NotificationEvent(val redId : Int)
 {
@@ -29,7 +34,7 @@ enum class Severity(val colorId : Int, var str : String)
     Moderate(R.color.colorModerate, "Moderate"),
     Unknown(R.color.colorPrimaryDark, "Unknown")
 }
-class WeatherAlertView(context:Context, attrSet:AttributeSet ) : ConstraintLayout(context, attrSet) {
+class WeatherAlertView : ConstraintLayout{
 
     lateinit var eventTextView : TextView
     lateinit var severityTextView : TextView
@@ -37,6 +42,12 @@ class WeatherAlertView(context:Context, attrSet:AttributeSet ) : ConstraintLayou
     lateinit var eventTypeIcon : ImageView
     lateinit var areaDescriptionTextView : TextView
     lateinit var zoneTextView : TextView
+
+    constructor(context:Context, attrSet:AttributeSet ) : super (context, attrSet)
+    {
+        val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        inflater.inflate(R.layout.weather_alert_view, this, true)
+    }
 
     override fun onFinishInflate() {
         super.onFinishInflate()
@@ -51,13 +62,14 @@ class WeatherAlertView(context:Context, attrSet:AttributeSet ) : ConstraintLayou
 
     }
 
-    fun bind(property : AlertProperties)
+    fun bind(alert : WeatherAlert)
     {
-        dateTextView.text = property?.sent?.toString()
-        eventTextView.text = property?.event
-        areaDescriptionTextView.text = property?.description?.replace("\n", " ")
+        dateTextView.text = alert?.sent?.toString()
+        eventTextView.text = alert?.event
+        areaDescriptionTextView.text = alert?.description?.replace("\n", " ")
+        zoneTextView.text = FipsDataLoader.zoneToCountyMap?.get(alert.zoneCode)
 
-        when(property?.severity)
+        when(alert?.severity)
         {
             "Severe" -> setSeverity(Severity.Severe)
             "Moderate" -> setSeverity(Severity.Moderate)
@@ -65,11 +77,6 @@ class WeatherAlertView(context:Context, attrSet:AttributeSet ) : ConstraintLayou
         }
     }
 
-    fun bind(property : AlertProperties, zoneCode : String)
-    {
-        zoneTextView.text = FipsDataLoader.zoneToCountyMap?.get(zoneCode)
-        bind(property)
-    }
     fun setSeverity(severity : Severity)
     {
         severityTextView.text = severity.str

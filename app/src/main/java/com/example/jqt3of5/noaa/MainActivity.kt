@@ -1,5 +1,6 @@
 package com.example.jqt3of5.noaa
 
+import android.arch.lifecycle.Observer
 import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.Snackbar
@@ -12,18 +13,16 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.Menu
 import android.view.MenuItem
-import com.example.jqt3of5.noaa.Repository.Api.WeatherApi
 import com.example.jqt3of5.noaa.Repository.Api.DataObjects.AlertFeature
 import com.example.jqt3of5.noaa.Repository.Data.MainDatabase
 import com.example.jqt3of5.noaa.Preferences.NotificationPreferencesActivity
 import com.example.jqt3of5.noaa.RegionSelect.FipsDataLoader
-import com.example.jqt3of5.noaa.Repository.Api.NetworkingFactory
-import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
+import com.example.jqt3of5.noaa.Repository.AlertsRepository
+import com.example.jqt3of5.noaa.Repository.Data.Entities.WeatherAlert
+import io.reactivex.schedulers.Schedulers
 
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -49,7 +48,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         nav_view.setNavigationItemSelectedListener(this)
 
-        MainDatabase.getInstance(this)
+        MainDatabase.createInstance(this)
         FipsDataLoader.loadFipsData(this)
 
         val layout =  LinearLayoutManager(this)
@@ -57,6 +56,28 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             adapter = mAdapter
             layoutManager =  layout
         }
+
+        MainDatabase.getInstance().notifications().getAllNotifications().observe(this, Observer {
+            //TODO: incrementally update the list, not all at once
+            mAdapter.clear()
+
+            it?.forEach {
+
+                if (it.table == WeatherAlert.TABLE_NAME)
+                {
+                    MainDatabase.getInstance().weatherAlerts()
+                            .selectById(it.foreign_key)
+                            .subscribeOn(Schedulers.io())
+                            .subscribe { it ->
+                                it?.let{
+                                    mAdapter.addAlert(it)
+                                }
+
+                            }
+                }
+            }
+            mAdapter.notifyDataSetChanged()
+        } )
     }
 
     override fun onResume() {
@@ -64,7 +85,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         val preferences = PreferenceManager.getDefaultSharedPreferences(this)
         val zones = preferences.getStringSet("ews_zones", emptySet())
-
+        zones.forEach {
+            AlertsRepository().getAlertForZone(it)
+        }
     }
 
     fun showPreferences()

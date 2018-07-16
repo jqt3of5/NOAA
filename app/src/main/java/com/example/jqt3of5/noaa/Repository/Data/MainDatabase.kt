@@ -1,29 +1,53 @@
 package com.example.jqt3of5.noaa.Repository.Data
 
-import android.arch.persistence.room.Database
-import android.arch.persistence.room.Room
-import android.arch.persistence.room.RoomDatabase
+import android.arch.persistence.room.*
 import android.content.Context
+import com.example.jqt3of5.noaa.Repository.Data.Entities.BlogPost
 import com.example.jqt3of5.noaa.Repository.Data.Entities.Notification
 import com.example.jqt3of5.noaa.Repository.Data.Entities.WeatherAlert
+import java.time.Instant
+import java.time.LocalDate
+import java.util.*
 
-@Database(entities = [Notification::class, WeatherAlert::class], version = 1)
+@Database(entities = [Notification::class, WeatherAlert::class, BlogPost::class], version = 1)
+@TypeConverters(MainDatabase.Converters::class)
 abstract class MainDatabase : RoomDatabase() {
     companion object {
 
-        lateinit var mInstance : MainDatabase
+        private var mInstance : MainDatabase? = null
 
-        fun getInstance(context : Context) : MainDatabase
+        fun getInstance() : MainDatabase
         {
-            mInstance?. let {
+            return mInstance!!
+        }
+
+        fun createInstance(context : Context) : MainDatabase
+        {
+            mInstance?.let {
                 return it
             }
 
             mInstance = Room.databaseBuilder(context.applicationContext, MainDatabase::class.java, "main").build()
-            return mInstance
+            return mInstance!!
         }
     }
 
     abstract fun notifications() : NotificationDao
     abstract fun weatherAlerts() : WeatherAlertDao
+    abstract fun blogPosts() : BlogDao
+
+    class Converters
+    {
+        @TypeConverter
+        fun fromDateString(date : String) : Date
+        {
+            return  Date(date)
+        }
+
+        @TypeConverter
+        fun toDateString(date : Date) : String
+        {
+            return date.toString()
+        }
+    }
 }

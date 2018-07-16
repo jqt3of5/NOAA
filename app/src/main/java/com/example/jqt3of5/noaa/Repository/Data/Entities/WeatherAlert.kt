@@ -6,19 +6,19 @@ import java.util.*
 
 @Entity(tableName = WeatherAlert.TABLE_NAME)
 class WeatherAlert(@PrimaryKey(autoGenerate = false)
-                   var id : String? = null,
-                   var zoneCode: String = "",
-                   var areaDesc : String = "",
-                   var headline : String = "",
-                   var description : String = "",
-                   var severity : String = "",
-                   var certainty : String = "",
-                   var event : String = "",
-                   var instruction: String = "",
-                   var sent : Date? = null,
-                   var effective: Date? = null,
-                   var expires : Date? = null,
-                   var ends : Date? = null)
+                   var id : String,
+                   var zoneCode: String,
+                   var areaDesc : String,
+                   var headline : String,
+                   var description : String,
+                   var severity : String,
+                   var certainty : String,
+                   var event : String,
+                   var instruction: String,
+                   var sent : Date?,
+                   var effective: Date?,
+                   var expires : Date?,
+                   var ends : Date?)
 {
     companion object {
         const val TABLE_NAME : String = "WeatherAlerts"
