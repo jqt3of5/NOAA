@@ -3,6 +3,7 @@ package com.example.jqt3of5.noaa.Repository.Api
 import com.example.jqt3of5.noaa.Repository.Api.DataObjects.AlertCountsByLocation
 import com.example.jqt3of5.noaa.Repository.Api.DataObjects.WeatherServiceZone
 import io.reactivex.Observable
+import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Headers
 import retrofit2.http.Path
@@ -19,17 +20,17 @@ interface WeatherApi
     @Headers("User-Agent: jqt3of5@gmail.com", "Accept: application/vnd.github.v3.full+json")
     @GET("/alerts/active/zone/{zone}")
     //Let's use Live data instead of RxJava!
-    fun getAlertByZone(@Path("zone") zone : String) : Observable<WeatherServiceZone>
+    fun getAlertByZone(@Path("zone") zone : String) : Call<WeatherServiceZone>
 
 
     @Headers("User-Agent: jqt3of5@gmail.com", "Accept: application/vnd.github.v3.full+json")
     @GET("/alerts/active/area/{area}")
-    fun getAlertByArea(@Path("area") area : String) : Observable<WeatherServiceZone>
+    fun getAlertByArea(@Path("area") area : String) : Call<WeatherServiceZone>
 
 
     @Headers("User-Agent: jqt3of5@gmail.com", "Accept: application/vnd.github.v3.full+json")
     @GET("/alerts/active/count")
-    fun getAlertCounts() : Observable<AlertCountsByLocation>
+    fun getAlertCounts() : Call<AlertCountsByLocation>
 
     //@Headers("User-Agent: jqt3of5@gmail.com", "Accept: application/vnd.github.v3.full+json")
     //@GET("/alerts/active/")

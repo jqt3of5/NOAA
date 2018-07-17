@@ -88,13 +88,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val preferences = PreferenceManager.getDefaultSharedPreferences(this)
         val zones = preferences.getStringSet("ews_zones", emptySet())
 
-        zones.forEach {
-            AlertsRepository().getAlertForZone(it).observe(this, Observer {
-                it?.let {
-                    MainDatabase.getInstance().notifications().insert(Notification(WeatherAlert.TABLE_NAME, it.first().id, Date()))
-                }
-            })
-        }
+        AlertsRepository().updateAlertsForZones(zones.distinct())
     }
 
     fun showPreferences()
