@@ -67,15 +67,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
                 if (it.table == WeatherAlert.TABLE_NAME)
                 {
-                    MainDatabase.getInstance().weatherAlerts()
+                    MainDatabase
+                            .getInstance()
+                            .weatherAlerts()
                             .selectById(it.foreign_key)
-                            .subscribeOn(Schedulers.io())
-                            .subscribe { it ->
-                                it?.let{
-                                    mAdapter.addAlert(it)
-                                }
-
-                            }
+                            .value?.let {
+                        mAdapter.addAlert(it)
+                    }
                 }
             }
             mAdapter.notifyDataSetChanged()
@@ -88,7 +86,18 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val preferences = PreferenceManager.getDefaultSharedPreferences(this)
         val zones = preferences.getStringSet("ews_zones", emptySet())
 
-        AlertsRepository().updateAlertsForZones(zones.distinct())
+        zones.forEach {
+            AlertsRepository().downloadAlertForZone(it).observe(this, Observer {
+            it?.let {
+                    if (it.any())
+                    {
+                        MainDatabase.DatabaseAsync().execute {
+                            notifications().insert(Notification(WeatherAlert.TABLE_NAME, it.first().id, Date()))
+                        }
+                    }
+                }
+            })
+        }
     }
 
     fun showPreferences()

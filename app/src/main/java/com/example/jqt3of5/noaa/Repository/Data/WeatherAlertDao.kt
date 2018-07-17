@@ -8,11 +8,14 @@ import io.reactivex.Single
 @Dao
 interface WeatherAlertDao {
 
+    @Query("SELECT * FROM" + WeatherAlert.TABLE_NAME)
+    fun selectAllAlerts() : LiveData<List<WeatherAlert>>
+
     @Query("SELECT * FROM " + WeatherAlert.TABLE_NAME + " WHERE zoneCode = :zone")
     fun selectByZoneCode(zone : String) : LiveData<List<WeatherAlert>>
 
     @Query("SELECT * FROM " + WeatherAlert.TABLE_NAME + " WHERE id = :id")
-    fun selectById(id : String) : Single<WeatherAlert?>
+    fun selectById(id : String) : LiveData<WeatherAlert?>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insert(alert : WeatherAlert)

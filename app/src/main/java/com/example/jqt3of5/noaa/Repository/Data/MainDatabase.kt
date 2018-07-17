@@ -2,6 +2,8 @@ package com.example.jqt3of5.noaa.Repository.Data
 
 import android.arch.persistence.room.*
 import android.content.Context
+import android.os.AsyncTask
+import android.support.annotation.MainThread
 import com.example.jqt3of5.noaa.Repository.Data.Entities.BlogPost
 import com.example.jqt3of5.noaa.Repository.Data.Entities.Notification
 import com.example.jqt3of5.noaa.Repository.Data.Entities.WeatherAlert
@@ -45,9 +47,24 @@ abstract class MainDatabase : RoomDatabase() {
         }
 
         @TypeConverter
-        fun toDateString(date : Date) : String
+        fun toDateString(date : Date?) : String
         {
-            return date.toString()
+            return date?.toString() ?: ""
         }
+    }
+
+    class DatabaseAsync : AsyncTask<Unit, Unit, Unit>()
+    {
+        private lateinit var mtask : MainDatabase.() -> Unit
+        fun execute (block : MainDatabase.() -> Unit)
+        {
+            mtask = block
+            execute()
+        }
+
+        override fun doInBackground(vararg p0: Unit?){
+            mtask(MainDatabase.getInstance())
+        }
+
     }
 }

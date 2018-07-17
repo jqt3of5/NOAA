@@ -17,25 +17,20 @@ import java.util.*
 
 class AlertsRepository {
 
-    fun updateAlertForZone(zoneCode : String) : LiveData<List<WeatherAlert>>
+    var alertsData : LiveData<List<WeatherAlert>>? = null
+
+    fun startGetForAlerts(zoneCode : String) : LiveData<List<WeatherAlert>>
     {
-        getAlertForZone(zoneCode)
+        downloadAlertForZone(zoneCode)
         val db = MainDatabase.getInstance()
-        return db.weatherAlerts().selectByZoneCode(zoneCode)
+        alertsData = db.weatherAlerts().selectByZoneCode(zoneCode)
+        return alertsData!!
     }
 
-    fun updateAlertsForZones(zones : List<String>)
-    {
-        zones.forEach {
-            updateAlertForZone(it)
-        }
-    }
-
-    fun getAlertForZone(zoneCode : String)
+    fun downloadAlertForZone(zoneCode : String) : LiveData<List<WeatherAlert>>
     {
         val liveData = MutableLiveData<List<WeatherAlert>>()
 
-        val db = MainDatabase.getInstance()
         NetworkingFactory.api<WeatherApi>
         {
             getAlertByZone(zoneCode)
@@ -50,11 +45,18 @@ class AlertsRepository {
                                         WeatherAlert(feature.id, zoneCode, it.areaDesc, it.headline, it.description, it.severity, it.certainty, it.event, it.instruction, it.sent, it.effective, it.expires, it.ends)
                                     }
                                 }?.let {
-                                    db.weatherAlerts().insertAll(it)
+                                    MainDatabase.DatabaseAsync().execute {
+                                        weatherAlerts().insertAll(it)
+                                        liveData.postValue(it)
+                                    }
                                 }
                             }
                         }
                     })
         }
+
+        return liveData
     }
+
+
 }
