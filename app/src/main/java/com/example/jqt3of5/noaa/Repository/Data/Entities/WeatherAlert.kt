@@ -5,8 +5,7 @@ import android.arch.persistence.room.PrimaryKey
 import java.util.*
 
 @Entity(tableName = WeatherAlert.TABLE_NAME)
-class WeatherAlert(@PrimaryKey(autoGenerate = false)
-                   var id : String,
+class WeatherAlert(var url : String,
                    var zoneCode: String,
                    var areaDesc : String,
                    var headline : String,
@@ -23,4 +22,7 @@ class WeatherAlert(@PrimaryKey(autoGenerate = false)
     companion object {
         const val TABLE_NAME : String = "WeatherAlerts"
     }
+
+    @PrimaryKey(autoGenerate = true)
+    var id : Long = 0
 }

@@ -7,7 +7,7 @@ import java.util.*
 @Entity(tableName = Notification.TABLE_NAME, primaryKeys = ["table", "foreign_key"])
 class Notification(
         var table : String,
-        var foreign_key : String,
+        var foreign_key : Long,
         var date : Date?
 ) {
     companion object {

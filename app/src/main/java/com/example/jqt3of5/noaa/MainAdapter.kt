@@ -22,7 +22,10 @@ class MainAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>()
     }
     fun addAlert(alert : WeatherAlert)
     {
-        alerts.add(0, alert)
+        if (!alerts.contains(alert))
+        {
+            alerts.add(0, alert)
+        }
     }
 
     override fun getItemViewType(position: Int): Int {

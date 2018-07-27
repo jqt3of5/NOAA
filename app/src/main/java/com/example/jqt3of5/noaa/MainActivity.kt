@@ -60,24 +60,20 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
 
         MainDatabase.getInstance().notifications().getAllNotifications().observe(this, Observer {
-            //TODO: incrementally update the list, not all at once
-            mAdapter.clear()
 
-            it?.forEach {
-
-                if (it.table == WeatherAlert.TABLE_NAME)
-                {
-                    MainDatabase
-                            .getInstance()
-                            .weatherAlerts()
-                            .selectById(it.foreign_key)
-                            .value?.let {
-                        mAdapter.addAlert(it)
+            MainDatabase.DatabaseAsync().execute {
+                it?.forEach {
+                    if (it.table == WeatherAlert.TABLE_NAME) {
+                        MainDatabase.getInstance().weatherAlerts().selectById(it.foreign_key)?.let{
+                            mAdapter.addAlert(it)
+                        }
                     }
                 }
+            }.onComplete {
+                mAdapter.notifyDataSetChanged()
             }
-            mAdapter.notifyDataSetChanged()
-        } )
+        })
+
     }
 
     override fun onResume() {

@@ -56,15 +56,28 @@ abstract class MainDatabase : RoomDatabase() {
     class DatabaseAsync : AsyncTask<Unit, Unit, Unit>()
     {
         private lateinit var mtask : MainDatabase.() -> Unit
-        fun execute (block : MainDatabase.() -> Unit)
+        private var mFinishTask : (MainDatabase.() -> Unit)? = null
+        fun execute (block : MainDatabase.() -> Unit) : DatabaseAsync
         {
             mtask = block
             execute()
+            return this
+        }
+
+        fun onComplete(block : MainDatabase.() -> Unit)
+        {
+            mFinishTask = block
         }
 
         override fun doInBackground(vararg p0: Unit?){
             mtask(MainDatabase.getInstance())
         }
+
+        override fun onPostExecute(result: Unit?) {
+            mFinishTask?.let { it(MainDatabase.getInstance()) }
+        }
+
+
 
     }
 }

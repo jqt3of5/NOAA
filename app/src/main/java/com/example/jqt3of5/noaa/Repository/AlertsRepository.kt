@@ -46,8 +46,14 @@ class AlertsRepository {
                                     }
                                 }?.let {
                                     MainDatabase.DatabaseAsync().execute {
-                                        weatherAlerts().insertAll(it)
-                                        liveData.postValue(it)
+                                        val alerts = it.filter {
+                                            weatherAlerts().alertCountForUrl(it.url) == 0
+                                        }
+                                        val ids : List<Long> = weatherAlerts().insertAll(alerts)
+                                        alerts.zip(ids){alert, id ->
+                                            alert.id = id
+                                        }
+                                        liveData.postValue( alerts)
                                     }
                                 }
                             }

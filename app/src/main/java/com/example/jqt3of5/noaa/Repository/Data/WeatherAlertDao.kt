@@ -8,19 +8,25 @@ import io.reactivex.Single
 @Dao
 interface WeatherAlertDao {
 
-    @Query("SELECT * FROM" + WeatherAlert.TABLE_NAME)
+    @Query("SELECT * FROM " + WeatherAlert.TABLE_NAME)
     fun selectAllAlerts() : LiveData<List<WeatherAlert>>
 
     @Query("SELECT * FROM " + WeatherAlert.TABLE_NAME + " WHERE zoneCode = :zone")
     fun selectByZoneCode(zone : String) : LiveData<List<WeatherAlert>>
 
     @Query("SELECT * FROM " + WeatherAlert.TABLE_NAME + " WHERE id = :id")
-    fun selectById(id : String) : LiveData<WeatherAlert?>
+    fun selectById(id : Long) : WeatherAlert?
+
+    @Query("SELECT * FROM " + WeatherAlert.TABLE_NAME + " WHERE id IN(:ids)")
+    fun selectByIds(ids : List<Long>) : List<WeatherAlert>
+
+    @Query ("SELECT count(id) FROM " + WeatherAlert.TABLE_NAME + " WHERE url = :url")
+    fun alertCountForUrl(url : String) : Int
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    fun insert(alert : WeatherAlert)
+    fun insert(alert : WeatherAlert) : Long
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    fun insertAll(alerts : List<WeatherAlert>)
+    fun insertAll(alerts : List<WeatherAlert>) : List<Long>
 
 }
