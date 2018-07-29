@@ -18,6 +18,15 @@ abstract class MainDatabase : RoomDatabase() {
 
         private var mInstance : MainDatabase? = null
 
+        fun runInAsyncTransaction(block : MainDatabase.() -> Unit) : DatabaseAsync
+        {
+            return DatabaseAsync().execute {
+                runInTransaction(Runnable {
+                    block(mInstance!!)
+                })
+            }
+        }
+
         fun getInstance() : MainDatabase
         {
             return mInstance!!

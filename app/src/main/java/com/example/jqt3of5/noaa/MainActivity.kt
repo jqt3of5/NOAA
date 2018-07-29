@@ -61,7 +61,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         MainDatabase.getInstance().notifications().getAllNotifications().observe(this, Observer {
 
-            MainDatabase.DatabaseAsync().execute {
+            MainDatabase.runInAsyncTransaction {
                 it?.forEach {
                     if (it.table == WeatherAlert.TABLE_NAME) {
                         MainDatabase.getInstance().weatherAlerts().selectById(it.foreign_key)?.let{
@@ -85,12 +85,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         zones.forEach {
             AlertsRepository().downloadAlertForZone(it).observe(this, Observer {
             it?.let {
-                    if (it.any())
-                    {
-                        MainDatabase.DatabaseAsync().execute {
-                            notifications().insert(Notification(WeatherAlert.TABLE_NAME, it.first().id, Date()))
-                        }
+                if (it.any())
+                {
+                    MainDatabase.DatabaseAsync().execute {
+                        notifications().insert(Notification(WeatherAlert.TABLE_NAME, it.first().id, Date()))
                     }
+                }
                 }
             })
         }

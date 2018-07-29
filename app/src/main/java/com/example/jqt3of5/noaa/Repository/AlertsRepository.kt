@@ -40,27 +40,26 @@ class AlertsRepository {
 
                         override fun onResponse(call: Call<WeatherServiceZone>?, response: Response<WeatherServiceZone>?) {
                             response?.body()?.let {
-                                it.features?.map{ feature ->
+                                it.features?.map { feature ->
                                     feature.properties!!.let {
                                         WeatherAlert(feature.id, zoneCode, it.areaDesc, it.headline, it.description, it.severity, it.certainty, it.event, it.instruction, it.sent, it.effective, it.expires, it.ends)
                                     }
                                 }?.let {
-                                    MainDatabase.DatabaseAsync().execute {
+                                    MainDatabase.runInAsyncTransaction {
                                         val alerts = it.filter {
                                             weatherAlerts().alertCountForUrl(it.url) == 0
                                         }
-                                        val ids : List<Long> = weatherAlerts().insertAll(alerts)
-                                        alerts.zip(ids){alert, id ->
+                                        val ids: List<Long> = weatherAlerts().insertAll(alerts)
+                                        alerts.zip(ids) { alert, id ->
                                             alert.id = id
                                         }
-                                        liveData.postValue( alerts)
+                                        liveData.postValue(alerts)
                                     }
                                 }
                             }
                         }
                     })
         }
-
         return liveData
     }
 
