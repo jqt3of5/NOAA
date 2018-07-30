@@ -14,6 +14,8 @@ class MainAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>()
     {
         NationalWeatherServiceAlerts, EmergencyZone,
     }
+
+    var showAllAlertsForZone : ((String) -> Unit)? = null
     private var alerts : MutableList<WeatherAlert> = mutableListOf()
 
     fun clear()
@@ -60,6 +62,9 @@ class MainAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>()
         {
             is NationalWeatherServiceNotificationView -> {
                 view.weatherAlertView.bind(alerts[position])
+                view.showAllAlertsButton.setOnClickListener {
+                    showAllAlertsForZone?.invoke(alerts[position].zoneCode)
+                }
             }
             is EmergencyZoneNotificationView -> {
 

@@ -4,7 +4,7 @@ class CountyFipsData(val stateName : String, val stateCode : String, val stateFi
 
     fun getZoneCode() : String
     {
-        return stateCode + "Z" + countFips
+        return stateCode + "C" + countFips
     }
 
     fun getStateCountyName() : String

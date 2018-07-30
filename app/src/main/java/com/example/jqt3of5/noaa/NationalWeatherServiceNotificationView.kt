@@ -12,14 +12,11 @@ import com.example.jqt3of5.noaa.Weather.WeatherAlertView
 class NationalWeatherServiceNotificationView(context:Context, attrSet:AttributeSet ) : CardView(context, attrSet) {
 
     lateinit var weatherAlertView : WeatherAlertView
+    lateinit var showAllAlertsButton : Button
 
     override fun onFinishInflate() {
         super.onFinishInflate()
         weatherAlertView = findViewById(R.id.weather_alert_view)
-
-        val button = findViewById(R.id.see_more_alerts_button) as Button
-        button.setOnClickListener {
-
-        }
+        showAllAlertsButton = findViewById(R.id.see_more_alerts_button) as Button
     }
 }

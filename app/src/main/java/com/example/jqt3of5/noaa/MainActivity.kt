@@ -20,6 +20,7 @@ import com.example.jqt3of5.noaa.RegionSelect.FipsDataLoader
 import com.example.jqt3of5.noaa.Repository.AlertsRepository
 import com.example.jqt3of5.noaa.Repository.Data.Entities.Notification
 import com.example.jqt3of5.noaa.Repository.Data.Entities.WeatherAlert
+import com.example.jqt3of5.noaa.Weather.WeatherActivity
 import io.reactivex.schedulers.Schedulers
 
 import kotlinx.android.synthetic.main.activity_main.*
@@ -59,6 +60,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             layoutManager =  layout
         }
 
+        mAdapter.showAllAlertsForZone =
+        {
+            showAlertsForZone(it)
+        }
         MainDatabase.getInstance().notifications().getAllNotifications().observe(this, Observer {
 
             MainDatabase.runInAsyncTransaction {
@@ -94,6 +99,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 }
             })
         }
+    }
+
+    fun showAlertsForZone(zone : String)
+    {
+        var intent = Intent(this, WeatherActivity::class.java)
+        intent.putExtra("zone", zone)
+        startActivity(intent)
     }
 
     fun showPreferences()
