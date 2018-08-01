@@ -20,12 +20,12 @@ class WeatherAlertsAdapter : RecyclerView.Adapter<WeatherAlertsAdapter.WeatherAl
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WeatherAlertViewHolder {
         val inflater = parent.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        val view = inflater.inflate(R.layout.weather_alert_view, parent, false) as WeatherAlertView
+        val view = inflater.inflate(R.layout.weather_alert_view, parent, true) as WeatherAlertView
         return WeatherAlertViewHolder(view)
     }
 
     override fun getItemCount(): Int {
-        return weatherAlerts?.count() ?: 0
+        return weatherAlerts?.size ?: 0
     }
 
     override fun onBindViewHolder(holder: WeatherAlertViewHolder, position: Int) {

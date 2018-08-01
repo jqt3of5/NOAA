@@ -21,9 +21,9 @@ class AlertsRepository {
 
     fun startGetForAlerts(zoneCode : String) : LiveData<List<WeatherAlert>>
     {
-        downloadAlertForZone(zoneCode)
         val db = MainDatabase.getInstance()
         alertsData = db.weatherAlerts().selectByZoneCode(zoneCode)
+        downloadAlertForZone(zoneCode)
         return alertsData!!
     }
 

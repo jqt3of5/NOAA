@@ -18,8 +18,11 @@ class WeatherActivity : AppCompatActivity() {
         layout.id = View.generateViewId()
         setContentView(layout, ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT))
 
-        val fragment = WeatherAlertsFragment()
-        fragment.arguments = intent.extras
-        supportFragmentManager.beginTransaction().add(layout.id, fragment).commit()
+        if (savedInstanceState == null)
+        {
+            val fragment = WeatherAlertsFragment()
+            fragment.arguments = intent.extras
+            supportFragmentManager.beginTransaction().add(layout.id, fragment).commit()
+        }
     }
 }

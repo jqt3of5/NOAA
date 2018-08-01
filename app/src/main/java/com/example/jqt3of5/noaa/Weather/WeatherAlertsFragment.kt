@@ -17,28 +17,35 @@ class WeatherAlertsFragment : Fragment()
 {
     lateinit var weatherView : DailyWeatherView
     lateinit var alertList : RecyclerView
-    lateinit var adapter : WeatherAlertsAdapter
+    lateinit var mAdapter : WeatherAlertsAdapter
+    lateinit var rootView : View
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        weatherView = rootView.findViewById(R.id.daily_weather_view)
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.weather_fragment, container, false)
-        weatherView = view.findViewById(R.id.daily_weather_view)
-        alertList = view.findViewById(R.id.weather_alerts_recycler_view)
 
-        alertList.layoutManager = LinearLayoutManager(this.context)
-        adapter = WeatherAlertsAdapter()
-        alertList.adapter = adapter
+        val layout = LinearLayoutManager(this.activity)
+        mAdapter = WeatherAlertsAdapter()
+
+        alertList = rootView.findViewById<RecyclerView>(R.id.weather_alerts_recycler_view).apply {
+            layoutManager =  layout
+            adapter = mAdapter
+        }
 
         val zoneCode = arguments!!["zone"] as String
         updateZoneCode(zoneCode)
+    }
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        rootView = inflater.inflate(R.layout.weather_fragment, container, false)
 
-        return view
+        return rootView
     }
 
     fun updateZoneCode(zoneCode : String)
     {
         AlertsRepository().startGetForAlerts(zoneCode).observe(this, Observer {
             it?.let {
-                adapter.updateWeatherAlerts(it)
+                mAdapter.updateWeatherAlerts(it)
             }
         })
     }
