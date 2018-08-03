@@ -10,8 +10,9 @@ import com.example.jqt3of5.noaa.R
 import com.example.jqt3of5.noaa.RegionSelect.FipsDataLoader
 import com.example.jqt3of5.noaa.Repository.Data.Entities.WeatherAlert
 import android.support.v4.content.ContextCompat.getSystemService
+import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
-
+import android.view.ViewGroup
 
 
 /*enum class NotificationEvent(val redId : Int)
@@ -47,6 +48,14 @@ class WeatherAlertView : ConstraintLayout{
     {
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         inflater.inflate(R.layout.weather_alert_view, this, true)
+    }
+
+    constructor(context:Context) : super(context)
+    {
+        val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        inflater.inflate(R.layout.weather_alert_view, this, true)
+        layoutParams = RecyclerView.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
+        onFinishInflate()
     }
 
     override fun onFinishInflate() {

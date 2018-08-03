@@ -11,4 +11,8 @@ class CountyFipsData(val stateName : String, val stateCode : String, val stateFi
     {
         return countyName + ", " + stateName
     }
+
+    override fun toString(): String {
+        return getStateCountyName()
+    }
 }

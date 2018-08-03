@@ -50,8 +50,12 @@ abstract class MainDatabase : RoomDatabase() {
     class Converters
     {
         @TypeConverter
-        fun fromDateString(date : String) : Date
+        fun fromDateString(date : String) : Date?
         {
+            if (date.isEmpty())
+            {
+                return null
+            }
             return  Date(date)
         }
 

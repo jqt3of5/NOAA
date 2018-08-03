@@ -19,8 +19,7 @@ class WeatherAlertsAdapter : RecyclerView.Adapter<WeatherAlertsAdapter.WeatherAl
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WeatherAlertViewHolder {
-        val inflater = parent.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        val view = inflater.inflate(R.layout.weather_alert_view, parent, true) as WeatherAlertView
+        var view = WeatherAlertView(parent.context)
         return WeatherAlertViewHolder(view)
     }
 
