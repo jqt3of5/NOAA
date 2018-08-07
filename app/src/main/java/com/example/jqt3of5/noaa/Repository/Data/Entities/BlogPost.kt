@@ -9,7 +9,7 @@ class BlogPost(
         val description : String,
         val author : String,
         val imageUrl : String?
-) {
+) : INotifiableEntity {
     companion object {
         const val TABLE_NAME : String = "BlogPosts"
     }

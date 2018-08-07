@@ -18,10 +18,11 @@ import com.example.jqt3of5.noaa.Repository.Data.MainDatabase
 import com.example.jqt3of5.noaa.Preferences.NotificationPreferencesActivity
 import com.example.jqt3of5.noaa.RegionSelect.FipsDataLoader
 import com.example.jqt3of5.noaa.Repository.AlertsRepository
+import com.example.jqt3of5.noaa.Repository.Data.Entities.BlogPost
+import com.example.jqt3of5.noaa.Repository.Data.Entities.EmergencyZoneNotification
 import com.example.jqt3of5.noaa.Repository.Data.Entities.Notification
 import com.example.jqt3of5.noaa.Repository.Data.Entities.WeatherAlert
 import com.example.jqt3of5.noaa.Weather.WeatherActivity
-import io.reactivex.schedulers.Schedulers
 
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
@@ -61,24 +62,46 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
 
         mAdapter.showAllAlertsForZone =
-        {
-            showAlertsForZone(it)
+        { zoneCode ->
+
+            var intent = Intent(this, WeatherActivity::class.java)
+            intent.putExtra("zone", zoneCode)
+            startActivity(intent)
         }
+
+        loadNotifications()
+    }
+
+    fun loadNotifications()
+    {
         MainDatabase.getInstance().notifications().getAllNotifications().observe(this, Observer {
 
-            MainDatabase.runInAsyncTransaction {
-                it?.forEach {
+            MainDatabase.runAsync {
+                it?.map {
                     if (it.table == WeatherAlert.TABLE_NAME) {
-                        MainDatabase.getInstance().weatherAlerts().selectById(it.foreign_key)?.let{
-                            mAdapter.addAlert(it)
-                        }
+                        return@map MainDatabase.getInstance().weatherAlerts().selectById(it.foreign_key)!!
                     }
+
+                    if (it.table == BlogPost.TABLE_NAME)
+                    {
+                        return@map MainDatabase.getInstance().blogPosts().selectById(it.foreign_key)!!
+                    }
+
+                    if (it.table == EmergencyZoneNotification.TABLE_NAME)
+                    {
+                        return@map MainDatabase.getInstance().emergencyZoneNotifications().selectById(it.foreign_key)!!
+                    }
+                    throw Exception("Table name was invalid!")
+
+                }?.also {
+                    mAdapter.setAlerts(it)
                 }
+
+
             }.onComplete {
                 mAdapter.notifyDataSetChanged()
             }
         })
-
     }
 
     override fun onResume() {
@@ -89,23 +112,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         zones.forEach {
             AlertsRepository().downloadAlertForZone(it).observe(this, Observer {
-            it?.let {
-                if (it.any())
+                if (it?.any() == true)
                 {
-                    MainDatabase.DatabaseAsync().execute {
+                    MainDatabase.runAsync {
                         notifications().insert(Notification(WeatherAlert.TABLE_NAME, it.first().id, Date()))
                     }
                 }
-                }
             })
         }
-    }
-
-    fun showAlertsForZone(zone : String)
-    {
-        var intent = Intent(this, WeatherActivity::class.java)
-        intent.putExtra("zone", zone)
-        startActivity(intent)
     }
 
     fun showPreferences()

@@ -13,6 +13,7 @@ import android.support.v4.content.ContextCompat.getSystemService
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import java.util.*
 
 
 /*enum class NotificationEvent(val redId : Int)
@@ -83,6 +84,13 @@ class WeatherAlertView : ConstraintLayout{
             "Severe" -> setSeverity(Severity.Severe)
             "Moderate" -> setSeverity(Severity.Moderate)
             else -> setSeverity(Severity.Unknown)
+        }
+
+        //The alert has expired, so lets update the ui to reflect that
+        if (alert.expires?.before(Date()) == true)
+        {
+            alpha = 0.25f
+            severityTextView.setTextColor(resources.getColor(R.color.colorPrimaryDark))
         }
     }
 

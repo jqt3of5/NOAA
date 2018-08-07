@@ -5,32 +5,41 @@ import android.support.v7.widget.CardView
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import com.example.jqt3of5.noaa.Repository.Api.DataObjects.AlertFeature
+import com.example.jqt3of5.noaa.Repository.Data.Entities.BlogPost
+import com.example.jqt3of5.noaa.Repository.Data.Entities.INotifiableEntity
 import com.example.jqt3of5.noaa.Repository.Data.Entities.WeatherAlert
 
 class MainAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>()
 {
     enum class NotificationViewTypes
     {
-        NationalWeatherServiceAlerts, EmergencyZone,
+        NationalWeatherServiceAlerts, EmergencyZoneNotification, BlogPost
     }
 
     var showAllAlertsForZone : ((String) -> Unit)? = null
-    private var alerts : MutableList<WeatherAlert> = mutableListOf()
+    private var mAlerts : MutableList<INotifiableEntity> = mutableListOf()
 
-    fun clear()
+    fun setAlerts(alerts : List<INotifiableEntity>)
     {
-        alerts.clear()
+        mAlerts.clear()
+        mAlerts.addAll(alerts)
     }
-    fun addAlert(alert : WeatherAlert)
+
+    fun insertAlert(alert : INotifiableEntity)
     {
-        if (!alerts.contains(alert))
+        if (!mAlerts.contains(alert))
         {
-            alerts.add(0, alert)
+            mAlerts.add(0, alert)
         }
     }
 
     override fun getItemViewType(position: Int): Int {
+        when (mAlerts[position])
+        {
+            is WeatherAlert -> return 0
+            is BlogPost -> return 1
+        }
+
         return 0
     }
 
@@ -44,7 +53,11 @@ class MainAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>()
                 val view =  inflater.inflate(R.layout.nws_notification_view, parent, false) as NationalWeatherServiceNotificationView
                 return NotificationViewHolder(view)
             }
-            NotificationViewTypes.EmergencyZone -> {
+            NotificationViewTypes.EmergencyZoneNotification -> {
+                val view =  inflater.inflate(R.layout.ez_notification_view, parent, false) as EmergencyZoneNotificationView
+                return NotificationViewHolder(view)
+            }
+            NotificationViewTypes.BlogPost -> {
                 val view =  inflater.inflate(R.layout.ez_notification_view, parent, false) as EmergencyZoneNotificationView
                 return NotificationViewHolder(view)
             }
@@ -52,7 +65,7 @@ class MainAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>()
     }
 
     override fun getItemCount(): Int {
-       return alerts.count()
+       return mAlerts.count()
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
@@ -61,11 +74,13 @@ class MainAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>()
         when (view)
         {
             is NationalWeatherServiceNotificationView -> {
-                view.weatherAlertView.bind(alerts[position])
+                val weatherAlert = mAlerts[position] as WeatherAlert
+                view.weatherAlertView.bind(weatherAlert)
                 view.showAllAlertsButton.setOnClickListener {
-                    showAllAlertsForZone?.invoke(alerts[position].zoneCode)
+                    showAllAlertsForZone?.invoke(weatherAlert.zoneCode)
                 }
             }
+
             is EmergencyZoneNotificationView -> {
 
             }

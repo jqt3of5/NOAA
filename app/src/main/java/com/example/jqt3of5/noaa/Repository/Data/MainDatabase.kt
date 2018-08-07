@@ -5,19 +5,26 @@ import android.content.Context
 import android.os.AsyncTask
 import android.support.annotation.MainThread
 import com.example.jqt3of5.noaa.Repository.Data.Entities.BlogPost
+import com.example.jqt3of5.noaa.Repository.Data.Entities.EmergencyZoneNotification
 import com.example.jqt3of5.noaa.Repository.Data.Entities.Notification
 import com.example.jqt3of5.noaa.Repository.Data.Entities.WeatherAlert
 import java.time.Instant
 import java.time.LocalDate
 import java.util.*
 
-@Database(entities = [Notification::class, WeatherAlert::class, BlogPost::class], version = 1)
+@Database(entities = [Notification::class, WeatherAlert::class, BlogPost::class, EmergencyZoneNotification::class], version = 1)
 @TypeConverters(MainDatabase.Converters::class)
 abstract class MainDatabase : RoomDatabase() {
     companion object {
 
         private var mInstance : MainDatabase? = null
 
+        fun runAsync(block : MainDatabase.() -> Unit) : DatabaseAsync
+        {
+            return DatabaseAsync().execute {
+                    block(mInstance!!)
+            }
+        }
         fun runInAsyncTransaction(block : MainDatabase.() -> Unit) : DatabaseAsync
         {
             return DatabaseAsync().execute {
@@ -46,6 +53,7 @@ abstract class MainDatabase : RoomDatabase() {
     abstract fun notifications() : NotificationDao
     abstract fun weatherAlerts() : WeatherAlertDao
     abstract fun blogPosts() : BlogDao
+    abstract fun emergencyZoneNotifications() : EmergencyZoneNotificationDao
 
     class Converters
     {

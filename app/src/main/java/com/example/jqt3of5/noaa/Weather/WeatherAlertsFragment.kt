@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.example.jqt3of5.noaa.Repository.Api.DataObjects.WeatherServiceZone
 import com.example.jqt3of5.noaa.R
+import com.example.jqt3of5.noaa.RegionSelect.FipsDataLoader
 import com.example.jqt3of5.noaa.Repository.AlertsRepository
 import com.example.jqt3of5.noaa.Repository.Data.Entities.WeatherAlert
 
@@ -34,13 +35,13 @@ class WeatherAlertsFragment : Fragment()
             adapter = mAdapter
         }
 
-        val countyName = arguments!!["county"] as String
-        weatherView.searchTextView.setText(countyName, true)
 
         val zoneCode = arguments!!["zone"] as String
+        FipsDataLoader.zoneToCountyMap?.let {
+            weatherView.searchTextView.setText(it[zoneCode], true)
+        }
+
         updateZoneCode(zoneCode)
-
-
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         rootView = inflater.inflate(R.layout.weather_fragment, container, false)

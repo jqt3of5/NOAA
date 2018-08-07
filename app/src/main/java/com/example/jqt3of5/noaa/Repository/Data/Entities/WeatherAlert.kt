@@ -17,7 +17,7 @@ class WeatherAlert(var url : String,
                    var sent : Date?,
                    var effective: Date?,
                    var expires : Date?,
-                   var ends : Date?)
+                   var ends : Date?) : INotifiableEntity
 {
     companion object {
         const val TABLE_NAME : String = "WeatherAlerts"

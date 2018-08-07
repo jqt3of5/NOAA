@@ -14,7 +14,7 @@ interface BlogDao {
     fun getAllPosts() : LiveData<List<BlogPost>>
 
     @Query("SELECT * FROM " + BlogPost.TABLE_NAME + " WHERE id = :id")
-    fun selectById(id : String) : BlogPost?
+    fun selectById(id : Long) : BlogPost?
 
     @Insert
     fun insert(post : BlogPost)
